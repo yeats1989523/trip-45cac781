@@ -1766,5 +1766,31 @@
 <div style="text-align:center;font-size:11px;color:#5E7589;padding:18px 0 30px">
 马来西亚 8 天 · 自由导航版 v14 · 单文件版<br>定位名点开即到 Google Maps · 游览图 Esri 卫星底图 · 话术供 VoxCPM 转音频
 </div>
+<!-- appjump v2 -->
+<script>
+document.addEventListener('click', function(e) {
+  var a = e.target.closest ? e.target.closest('a[href*="google.com/maps"]') : null;
+  if (!a) return;
+  e.preventDefault();
+  var q = '';
+  try { q = new URL(a.href, location.href).searchParams.get('query') || ''; } catch(_) {
+    var m = a.href.match(/[?&]query=([^&]+)/); q = m ? decodeURIComponent(m[1]) : '';
+  }
+  var t0 = Date.now(), went = false;
+  var onHide = function(){ went = true; };
+  document.addEventListener('visibilitychange', onHide, {once:true});
+  var f = document.createElement('iframe');
+  f.style.display = 'none';
+  f.src = 'comgooglemaps://?q=' + encodeURIComponent(q);
+  document.body.appendChild(f);
+  setTimeout(function(){
+    try { f.remove(); } catch(_) {}
+    document.removeEventListener('visibilitychange', onHide);
+    if (!went && !document.hidden && Date.now() - t0 < 2800) {
+      location.href = a.href;
+    }
+  }, 1500);
+});
+</script>
 </body>
 </html>
